@@ -218,8 +218,13 @@ const GAL_TOTAL = 6;
 function initGallery() {
   galIndex = 0;
   document.querySelectorAll('.mem-photo').forEach(img => {
-    if (img.dataset.src && !img.src) img.src = img.dataset.src;
-    if (img.complete && img.naturalWidth === 0) img.parentNode?.classList.add('placeholder');
+    img.parentNode?.classList.remove('placeholder');
+    if (!img.complete) {
+      img.addEventListener('load', () => img.parentNode?.classList.remove('placeholder'), { once: true });
+      img.addEventListener('error', () => img.parentNode?.classList.add('placeholder'), { once: true });
+    } else if (img.naturalWidth === 0) {
+      img.parentNode?.classList.add('placeholder');
+    }
   });
   renderGallery();
   // build dots once
@@ -235,11 +240,11 @@ function initGallery() {
 }
 
 function renderGallery() {
-  const slider = document.getElementById('gallerySlider');
-  if (!slider) return;
-  const slides = slider.querySelectorAll('.mem-slide');
+  const slides = document.querySelectorAll('#gallerySlider .mem-slide');
   slides.forEach((s, i) => {
-    s.style.transform = `translateX(${(i - galIndex) * 100}%)`;
+    const show = i === galIndex;
+    s.classList.toggle('active-slide', show);
+    s.hidden = !show;
   });
 }
 
