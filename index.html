@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For You, My Love</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <canvas id="hearts-canvas" aria-hidden="true"></canvas>
+
+  <main class="page">
+    <header class="hero">
+      <p class="hero-eyebrow">A little something, just for you</p>
+      <h1 class="hero-title">
+        I love you,<br />
+        <span id="her-name">Sayang</span>
+      </h1>
+      <p class="hero-sub">
+        Every day with you feels like the universe finally got something right.
+      </p>
+      <button type="button" class="btn-primary" id="open-letter-btn">
+        Open my heart
+      </button>
+    </header>
+
+    <section class="reasons" aria-labelledby="reasons-heading">
+      <h2 id="reasons-heading">Reasons my heart chose you</h2>
+      <div class="reasons-grid" id="reasons-grid"></div>
+    </section>
+
+    <section class="counter" aria-labelledby="counter-heading">
+      <h2 id="counter-heading">How much I love you</h2>
+      <p class="counter-number" id="love-counter" aria-live="polite">0</p>
+      <p class="counter-label">and still counting…</p>
+      <button type="button" class="btn-secondary" id="add-love-btn">Add more love</button>
+    </section>
+
+    <section class="timeline" aria-labelledby="timeline-heading">
+      <h2 id="timeline-heading">Little moments, big meaning</h2>
+      <ul class="timeline-list" id="timeline-list"></ul>
+    </section>
+
+    <footer class="closing">
+      <p class="closing-quote" id="closing-quote"></p>
+      <p class="closing-sign">Forever yours,</p>
+      <p class="closing-name">— Adam</p>
+    </footer>
+  </main>
+
+  <dialog class="letter-modal" id="letter-modal" aria-labelledby="letter-title">
+    <article class="letter">
+      <button type="button" class="letter-close" id="close-letter-btn" aria-label="Close letter">&times;</button>
+      <h2 id="letter-title">My love letter to you</h2>
+      <div class="letter-body" id="letter-body"></div>
+    </article>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>
