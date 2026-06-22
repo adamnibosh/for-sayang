@@ -39,6 +39,22 @@ const MESSAGES = [
 // ╚══════════════════════════════════════════════╝
 // Adam's birthday: 14 June → 1406
 const PASSCODE = '1406';
+const IS_TOUCH = window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function hapticTap() {
+  if (navigator.vibrate) navigator.vibrate(12);
+}
+
+function pointerCoords(evt) {
+  if (evt.changedTouches?.[0]) {
+    return { x: evt.changedTouches[0].clientX, y: evt.changedTouches[0].clientY };
+  }
+  if (evt.touches?.[0]) {
+    return { x: evt.touches[0].clientX, y: evt.touches[0].clientY };
+  }
+  return { x: evt.clientX, y: evt.clientY };
+}
 
 // ─── screen navigation ───────────────────────────
 const GIFT_SCREENS = new Set(['letter', 'memories', 'messages']);
@@ -67,6 +83,7 @@ function goTo(name) {
     t.hidden = false;
     t.removeAttribute('inert');
     t.classList.add('active');
+    t.scrollTop = 0;
   }
 
   if (name === 'lock') {
@@ -82,51 +99,95 @@ function goTo(name) {
   if (GIFT_SCREENS.has(name)) burstConfetti();
 }
 
-let suppressClick = false;
+let lastPointerUp = 0;
 
-function handleTap(e) {
-  if (e.type === 'click' && suppressClick) return;
-  if (e.type === 'touchend') {
-    suppressClick = true;
-    setTimeout(() => { suppressClick = false; }, 450);
-  }
+function handlePointerUp(e) {
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+
+  const now = Date.now();
+  if (now - lastPointerUp < 280) return;
+  lastPointerUp = now;
 
   const gotoBtn = e.target.closest('[data-goto]');
   if (gotoBtn) {
     e.preventDefault();
+    hapticTap();
     spawnRipple(gotoBtn, e);
-    setTimeout(() => goTo(gotoBtn.dataset.goto), 120);
+    setTimeout(() => goTo(gotoBtn.dataset.goto), IS_TOUCH ? 80 : 120);
     return;
   }
 
   const doneBtn = e.target.closest('[data-done]');
   if (doneBtn) {
     e.preventDefault();
+    hapticTap();
     spawnRipple(doneBtn, e);
     markVisited(doneBtn.dataset.done);
-    setTimeout(() => goTo('gift'), 120);
+    setTimeout(() => goTo('gift'), IS_TOUCH ? 80 : 120);
+    return;
+  }
+
+  const galPrev = e.target.closest('#galPrev');
+  if (galPrev) {
+    e.preventDefault();
+    hapticTap();
+    galIndex = (galIndex - 1 + GAL_TOTAL) % GAL_TOTAL;
+    renderGallery();
+    updateGalDots();
+    return;
+  }
+
+  const galNext = e.target.closest('#galNext');
+  if (galNext) {
+    e.preventDefault();
+    hapticTap();
+    galIndex = (galIndex + 1) % GAL_TOTAL;
+    renderGallery();
+    updateGalDots();
+    return;
+  }
+
+  const msgPrev = e.target.closest('#msgPrev');
+  if (msgPrev) {
+    e.preventDefault();
+    hapticTap();
+    msgIndex = (msgIndex - 1 + MESSAGES.length) % MESSAGES.length;
+    renderMessage();
+    updateMsgDots();
+    return;
+  }
+
+  const msgNext = e.target.closest('#msgNext');
+  if (msgNext) {
+    e.preventDefault();
+    hapticTap();
+    msgIndex = (msgIndex + 1) % MESSAGES.length;
+    renderMessage();
+    updateMsgDots();
     return;
   }
 
   const key = e.target.closest('#keypad .key');
   if (key) {
     e.preventDefault();
+    hapticTap();
     handleKeyPress(key, e);
   }
 }
 
-document.getElementById('screenStack')?.addEventListener('click', handleTap);
-document.getElementById('screenStack')?.addEventListener('touchend', handleTap, { passive: false });
+const screenStack = document.getElementById('screenStack');
+screenStack?.addEventListener('pointerup', handlePointerUp);
 
 // ─── ripple ──────────────────────────────────────
 function spawnRipple(el, evt) {
   const rect = el.getBoundingClientRect();
+  const pt = pointerCoords(evt);
   const r = document.createElement('span');
   r.className = 'ripple';
   const size = Math.max(rect.width, rect.height) * 1.2;
   r.style.width = r.style.height = size + 'px';
-  r.style.left = ((evt.clientX ?? rect.left + rect.width/2) - rect.left - size/2) + 'px';
-  r.style.top  = ((evt.clientY ?? rect.top + rect.height/2) - rect.top  - size/2) + 'px';
+  r.style.left = ((pt.x || rect.left + rect.width / 2) - rect.left - size / 2) + 'px';
+  r.style.top  = ((pt.y || rect.top + rect.height / 2) - rect.top - size / 2) + 'px';
   el.appendChild(r);
   setTimeout(() => r.remove(), 650);
 }
@@ -246,6 +307,17 @@ function renderGallery() {
     s.classList.toggle('active-slide', show);
     s.hidden = !show;
   });
+
+  const nextImg = slides[galIndex]?.querySelector('.mem-photo');
+  if (nextImg?.loading === 'lazy') {
+    const preload = new Image();
+    preload.src = nextImg.src;
+  }
+  const ahead = slides[(galIndex + 1) % GAL_TOTAL]?.querySelector('.mem-photo');
+  if (ahead) {
+    const preloadAhead = new Image();
+    preloadAhead.src = ahead.src;
+  }
 }
 
 function updateGalDots() {
@@ -253,30 +325,6 @@ function updateGalDots() {
     d.classList.toggle('active', i === galIndex);
   });
 }
-
-document.getElementById('galPrev')?.addEventListener('click', () => {
-  galIndex = (galIndex - 1 + GAL_TOTAL) % GAL_TOTAL;
-  renderGallery(); updateGalDots();
-});
-document.getElementById('galNext')?.addEventListener('click', () => {
-  galIndex = (galIndex + 1) % GAL_TOTAL;
-  renderGallery(); updateGalDots();
-});
-
-// touch swipe on gallery
-let touchStartX = 0;
-document.getElementById('gallerySlider')?.addEventListener('touchstart', e => {
-  touchStartX = e.touches[0].clientX;
-}, { passive: true });
-document.getElementById('gallerySlider')?.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  if (Math.abs(dx) > 40) {
-    galIndex = dx < 0
-      ? (galIndex + 1) % GAL_TOTAL
-      : (galIndex - 1 + GAL_TOTAL) % GAL_TOTAL;
-    renderGallery(); updateGalDots();
-  }
-});
 
 // ─── sweet messages ───────────────────────────────
 let msgIndex = 0;
@@ -320,14 +368,7 @@ function updateMsgDots() {
   });
 }
 
-document.getElementById('msgPrev')?.addEventListener('click', () => {
-  msgIndex = (msgIndex - 1 + MESSAGES.length) % MESSAGES.length;
-  renderMessage(); updateMsgDots();
-});
-document.getElementById('msgNext')?.addEventListener('click', () => {
-  msgIndex = (msgIndex + 1) % MESSAGES.length;
-  renderMessage(); updateMsgDots();
-});
+
 
 // ─── confetti ─────────────────────────────────────
 const canvas = document.getElementById('confettiCanvas');
@@ -344,9 +385,10 @@ window.addEventListener('resize', resizeCanvas);
 resizeCanvas();
 
 function burstConfetti() {
-  if (!ctx) return;
+  if (!ctx || REDUCED_MOTION) return;
   resizeCanvas();
-  for (let i = 0; i < 65; i++) {
+  const count = IS_TOUCH ? 38 : 65;
+  for (let i = 0; i < count; i++) {
     confetti.push({
       x: canvas.width/2 + (Math.random()-.5)*80,
       y: canvas.height*.35,
@@ -438,12 +480,12 @@ function rainLoop() {
 }
 
 function startHeartRain() {
-  if (rainRunning) return;
+  if (rainRunning || REDUCED_MOTION) return;
   rainRunning = true;
   rainDrops   = [];
   resizeRainCanvas();
-  // seed an initial spread so it doesn't feel empty at first
-  for (let i = 0; i < 18; i++) {
+  const seedCount = IS_TOUCH ? 12 : 18;
+  for (let i = 0; i < seedCount; i++) {
     spawnRainDrop();
     rainDrops[rainDrops.length - 1].y = Math.random() * (rainCanvas?.height ?? 600);
   }
@@ -461,4 +503,41 @@ function stopHeartRain() {
 document.getElementById('screen-finale')?.addEventListener('click', e => {
   const btn = e.target.closest('[data-goto]');
   if (btn) stopHeartRain();
+});
+
+// swipe — gallery + messages (iPhone & Android)
+let swipeStartX = 0;
+let swipeStartY = 0;
+let swipeZone = null;
+
+function bindSwipe(el, zone, onSwipe) {
+  if (!el) return;
+  el.addEventListener('touchstart', e => {
+    swipeStartX = e.touches[0].clientX;
+    swipeStartY = e.touches[0].clientY;
+    swipeZone = zone;
+  }, { passive: true });
+
+  el.addEventListener('touchend', e => {
+    if (swipeZone !== zone) return;
+    const dx = e.changedTouches[0].clientX - swipeStartX;
+    const dy = e.changedTouches[0].clientY - swipeStartY;
+    if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+      hapticTap();
+      onSwipe(dx < 0 ? 1 : -1);
+    }
+    swipeZone = null;
+  }, { passive: true });
+}
+
+bindSwipe(document.getElementById('gallerySlider'), 'gallery', dir => {
+  galIndex = (galIndex + dir + GAL_TOTAL) % GAL_TOTAL;
+  renderGallery();
+  updateGalDots();
+});
+
+bindSwipe(document.getElementById('msgCard'), 'messages', dir => {
+  msgIndex = (msgIndex + dir + MESSAGES.length) % MESSAGES.length;
+  renderMessage();
+  updateMsgDots();
 });
