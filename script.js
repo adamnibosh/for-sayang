@@ -1,219 +1,428 @@
-/* ========== Personalize these ========== */
-const HER_NAME = "Sayang";
-const YOUR_NAME = "Adam";
-
-const REASONS = [
-  { icon: "♥", text: "Your smile is the first thing I look for — and the best part of my day." },
-  { icon: "✨", text: "You make ordinary moments feel like little adventures." },
-  { icon: "🌙", text: "Even on hard days, knowing you're there makes everything softer." },
-  { icon: "🌸", text: "You listen, you care, and you love in a way that feels like home." },
-  { icon: "💫", text: "With you, I don't have to pretend — I can just be myself, fully." },
-  { icon: "∞", text: "I keep falling for you — not once, but again and again." },
-];
-
-const MOMENTS = [
-  "The way you laugh at the smallest things",
-  "Late-night talks that I never want to end",
-  "Your hand in mine — simple, but everything",
-  "Every plan we make, because it's with you",
-  "The quiet comfort of just being together",
-];
-
-const LETTER_PARAGRAPHS = [
-  "I don't think I tell you enough how deeply you mean to me. You are not just someone I love — you are the person who changed how I see love itself.",
-  "Before you, I thought love was a big dramatic thing. With you, I learned it's in the small things: your voice, your kindness, the way you make me feel chosen every single day.",
-  "I am grateful for you — for your heart, your patience, and the beautiful soul you share with me. I want to keep choosing you, in every season, in every mood, in every tomorrow.",
-  "So this little page is my way of saying: I love you. Not just today. Not just when it's easy. I love you in the quiet ways and the loud ones. I love you, and I'm proud to be yours.",
-];
-
-const CLOSING_QUOTE =
-  "\"You are my favorite person, my safest place, and the love story I never want to end.\"";
-
-/* ========== DOM setup ========== */
-document.getElementById("her-name").textContent = HER_NAME;
-document.querySelector(".closing-name").textContent = `— ${YOUR_NAME}`;
-
-const reasonsGrid = document.getElementById("reasons-grid");
-REASONS.forEach((reason, i) => {
-  const card = document.createElement("article");
-  card.className = "reason-card";
-  card.innerHTML = `
-    <span class="reason-icon" aria-hidden="true">${reason.icon}</span>
-    <p class="reason-text">${reason.text}</p>
-  `;
-  card.style.transitionDelay = `${i * 0.08}s`;
-  reasonsGrid.appendChild(card);
-});
-
-const timelineList = document.getElementById("timeline-list");
-MOMENTS.forEach((moment, i) => {
-  const li = document.createElement("li");
-  li.className = "timeline-item";
-  li.innerHTML = `
-    <span class="timeline-dot" aria-hidden="true"></span>
-    <p class="timeline-text">${moment}</p>
-  `;
-  li.style.transitionDelay = `${i * 0.1}s`;
-  timelineList.appendChild(li);
-});
-
-const letterBody = document.getElementById("letter-body");
-LETTER_PARAGRAPHS.forEach((para) => {
-  const p = document.createElement("p");
-  p.textContent = para;
-  letterBody.appendChild(p);
-});
-
-document.getElementById("closing-quote").textContent = CLOSING_QUOTE;
-
-/* ========== Love counter ========== */
-let loveCount = 100;
-const counterEl = document.getElementById("love-counter");
-
-function formatLove(n) {
-  return n >= 1000000 ? "∞" : n.toLocaleString();
-}
-
-function updateCounter(target) {
-  const start = loveCount;
-  const diff = target - start;
-  const duration = 600;
-  const startTime = performance.now();
-
-  function tick(now) {
-    const t = Math.min((now - startTime) / duration, 1);
-    const eased = 1 - Math.pow(1 - t, 3);
-    loveCount = Math.round(start + diff * eased);
-    counterEl.textContent = formatLove(loveCount);
-    if (t < 1) requestAnimationFrame(tick);
-  }
-
-  requestAnimationFrame(tick);
-}
-
-updateCounter(loveCount);
-
-document.getElementById("add-love-btn").addEventListener("click", (e) => {
-  const bump = Math.floor(Math.random() * 40) + 15;
-  updateCounter(loveCount + bump);
-  spawnBurst(e.clientX, e.clientY);
-});
-
-/* ========== Letter modal ========== */
-const modal = document.getElementById("letter-modal");
-
-document.getElementById("open-letter-btn").addEventListener("click", () => {
-  modal.showModal();
-});
-
-document.getElementById("close-letter-btn").addEventListener("click", () => {
-  modal.close();
-});
-
-modal.addEventListener("click", (e) => {
-  if (e.target === modal) modal.close();
-});
-
-/* ========== Scroll reveal ========== */
-const revealObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-      }
-    });
+// ╔══════════════════════════════════════════════╗
+// ║  SWEET MESSAGES DATA — edit these!           ║
+// ╚══════════════════════════════════════════════╝
+const MESSAGES = [
+  {
+    text: "you are the kindest person i've ever known. 🌸",
+    sub: "and i mean that more than you know."
   },
-  { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
-);
+  {
+    text: "i think about you way more than i let on. 💛",
+    sub: "like, embarrassingly often."
+  },
+  {
+    text: "being around you just makes everything feel lighter. ✨",
+    sub: "thank you for that."
+  },
+  {
+    text: "i'm really lucky you're in my life. 🤍",
+    sub: "even on the hard days."
+  },
+  {
+    text: "you deserve all the softness the world has. 🌷",
+    sub: "i hope i can be part of that."
+  },
+  {
+    text: "i choose you. yesterday, today, always. 🐾",
+    sub: "even when i forget to show it."
+  }
+];
 
-document.querySelectorAll(".reason-card, .timeline-item").forEach((el) => {
-  revealObserver.observe(el);
-});
+// ╔══════════════════════════════════════════════╗
+// ║  MEMORY CAPTIONS — edit these to match yours ║
+// ╚══════════════════════════════════════════════╝
+// (captions are already in the HTML, this is just a reminder
+//  to also edit index.html mem-caption paragraphs)
 
-/* ========== Heart burst on click ========== */
-function spawnBurst(x, y) {
-  const hearts = ["♥", "♡", "💕", "✨"];
-  for (let i = 0; i < 8; i++) {
-    const el = document.createElement("span");
-    el.className = "burst-heart";
-    el.textContent = hearts[i % hearts.length];
-    el.style.left = `${x}px`;
-    el.style.top = `${y}px`;
-    const angle = (Math.PI * 2 * i) / 8;
-    const dist = 40 + Math.random() * 50;
-    el.style.setProperty("--dx", `${Math.cos(angle) * dist}px`);
-    el.style.setProperty("--dy", `${Math.sin(angle) * dist - 30}px`);
-    document.body.appendChild(el);
-    setTimeout(() => el.remove(), 1200);
+// ╔══════════════════════════════════════════════╗
+// ║  PASSCODE                                    ║
+// ╚══════════════════════════════════════════════╝
+const PASSCODE = '1406';
+
+// ─── screen navigation ───────────────────────────
+const GIFT_SCREENS = new Set(['letter', 'memories', 'messages']);
+const visited = new Set();
+
+function markVisited(name) {
+  visited.add(name);
+  const card = document.getElementById('gcard-' + name);
+  if (card) card.classList.add('visited');
+  if (visited.size === 3) {
+    setTimeout(() => {
+      document.getElementById('finaleReveal')?.classList.add('show');
+    }, 500);
   }
 }
 
-document.addEventListener("click", (e) => {
-  if (e.target.closest("button, dialog, .letter-close")) return;
-  if (Math.random() > 0.65) spawnBurst(e.clientX, e.clientY);
-});
-
-/* ========== Floating hearts canvas ========== */
-const canvas = document.getElementById("hearts-canvas");
-const ctx = canvas.getContext("2d");
-const particles = [];
-let w, h;
-
-function resize() {
-  w = canvas.width = window.innerWidth;
-  h = canvas.height = window.innerHeight;
+function goTo(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const t = document.getElementById('screen-' + name);
+  if (t) t.classList.add('active');
+  if (name === 'lock')     resetKeypad();
+  if (name === 'memories') initGallery();
+  if (name === 'messages') initMessages();
+  if (name === 'finale')   startHeartRain();
+  // burst confetti when entering a gift screen
+  if (GIFT_SCREENS.has(name)) burstConfetti();
 }
 
-resize();
-window.addEventListener("resize", resize);
-
-class Heart {
-  constructor() {
-    this.reset(true);
-  }
-
-  reset(initial = false) {
-    this.x = Math.random() * w;
-    this.y = initial ? Math.random() * h : h + 20;
-    this.size = 6 + Math.random() * 10;
-    this.speed = 0.3 + Math.random() * 0.6;
-    this.drift = (Math.random() - 0.5) * 0.4;
-    this.opacity = 0.15 + Math.random() * 0.25;
-    this.phase = Math.random() * Math.PI * 2;
-  }
-
-  draw() {
-    ctx.save();
-    ctx.globalAlpha = this.opacity;
-    ctx.fillStyle = "#c45c7a";
-    ctx.translate(this.x, this.y);
-    ctx.scale(this.size / 16, this.size / 16);
-    ctx.beginPath();
-    ctx.moveTo(0, 4);
-    ctx.bezierCurveTo(0, 0, -8, 0, -8, 4);
-    ctx.bezierCurveTo(-8, 8, 0, 12, 0, 16);
-    ctx.bezierCurveTo(0, 12, 8, 8, 8, 4);
-    ctx.bezierCurveTo(8, 0, 0, 0, 0, 4);
-    ctx.fill();
-    ctx.restore();
-  }
-
-  update() {
-    this.y -= this.speed;
-    this.x += this.drift + Math.sin(this.phase + this.y * 0.02) * 0.3;
-    if (this.y < -20) this.reset();
-  }
-}
-
-for (let i = 0; i < 28; i++) particles.push(new Heart());
-
-function animate() {
-  ctx.clearRect(0, 0, w, h);
-  particles.forEach((p) => {
-    p.update();
-    p.draw();
+// ── data-goto buttons (navigation only, no visit tracking) ──
+document.querySelectorAll('[data-goto]').forEach(el => {
+  el.addEventListener('click', e => {
+    spawnRipple(el, e);
+    setTimeout(() => goTo(el.dataset.goto), 140);
   });
-  requestAnimationFrame(animate);
+});
+
+// ── data-done buttons (mark gift complete → back to picker) ──
+document.querySelectorAll('[data-done]').forEach(el => {
+  el.addEventListener('click', e => {
+    spawnRipple(el, e);
+    const gift = el.dataset.done;
+    markVisited(gift);
+    setTimeout(() => goTo('gift'), 140);
+  });
+});
+
+// ─── ripple ──────────────────────────────────────
+function spawnRipple(el, evt) {
+  const rect = el.getBoundingClientRect();
+  const r = document.createElement('span');
+  r.className = 'ripple';
+  const size = Math.max(rect.width, rect.height) * 1.2;
+  r.style.width = r.style.height = size + 'px';
+  r.style.left = ((evt.clientX ?? rect.left + rect.width/2) - rect.left - size/2) + 'px';
+  r.style.top  = ((evt.clientY ?? rect.top + rect.height/2) - rect.top  - size/2) + 'px';
+  el.appendChild(r);
+  setTimeout(() => r.remove(), 650);
 }
 
-animate();
+// ─── keypad + passcode ────────────────────────────
+const heartSlots = document.querySelectorAll('#heartsRow .heart-slot');
+const burstLayer = document.getElementById('burstLayer');
+const wrongMsg   = document.getElementById('wrongMsg');
+let entered = '';
+
+function resetKeypad() {
+  entered = '';
+  heartSlots.forEach(h => {
+    h.textContent = '🤍';
+    h.classList.remove('filled', 'wrong');
+  });
+  wrongMsg.classList.remove('show');
+}
+
+function setWrong() {
+  heartSlots.forEach(h => {
+    h.textContent = '❌';
+    h.classList.add('wrong');
+    h.classList.remove('filled');
+  });
+  wrongMsg.classList.add('show');
+  setTimeout(() => resetKeypad(), 1100);
+}
+
+function spawnHeartBurst() {
+  if (!burstLayer) return;
+  ['💕','💛','✨','🤍','🌸'].forEach((em, i) => {
+    setTimeout(() => {
+      const h = document.createElement('span');
+      h.className = 'burst-heart';
+      h.textContent = em;
+      const angle = (Math.PI * 2 * i) / 5 + Math.random() * 0.5;
+      const dist  = 80 + Math.random() * 80;
+      h.style.setProperty('--fly-to', `translate(${Math.cos(angle)*dist}px,${Math.sin(angle)*dist-40}px)`);
+      h.style.left = '50%';
+      h.style.top  = '42%';
+      burstLayer.appendChild(h);
+      setTimeout(() => h.remove(), 950);
+    }, i * 60);
+  });
+}
+
+document.querySelectorAll('#keypad .key').forEach(key => {
+  key.addEventListener('click', e => {
+    spawnRipple(key, e);
+    const k = key.dataset.key;
+
+    if (k === 'back') {
+      if (entered.length > 0) {
+        entered = entered.slice(0, -1);
+        heartSlots[entered.length].textContent = '🤍';
+        heartSlots[entered.length].classList.remove('filled');
+        wrongMsg.classList.remove('show');
+      }
+      return;
+    }
+
+    if (k === 'enter') {
+      if (entered.length === 4) checkCode();
+      return;
+    }
+
+    if (entered.length < 4) {
+      heartSlots[entered.length].textContent = '❤️';
+      heartSlots[entered.length].classList.add('filled');
+      entered += k;
+    }
+
+    if (entered.length === 4) setTimeout(checkCode, 260);
+  });
+});
+
+function checkCode() {
+  if (entered === PASSCODE) {
+    spawnHeartBurst();
+    setTimeout(() => goTo('ready'), 430);
+  } else {
+    setWrong();
+  }
+}
+
+// ─── gallery (memories) ───────────────────────────
+let galIndex = 0;
+const GAL_TOTAL = 6;
+
+function initGallery() {
+  galIndex = 0;
+  renderGallery();
+  // build dots once
+  const dotContainer = document.getElementById('galDots');
+  if (dotContainer && dotContainer.children.length === 0) {
+    for (let i = 0; i < GAL_TOTAL; i++) {
+      const d = document.createElement('span');
+      d.className = 'gal-dot' + (i === 0 ? ' active' : '');
+      dotContainer.appendChild(d);
+    }
+  }
+  updateGalDots();
+}
+
+function renderGallery() {
+  const slider = document.getElementById('gallerySlider');
+  if (!slider) return;
+  const slides = slider.querySelectorAll('.mem-slide');
+  slides.forEach((s, i) => {
+    s.style.transform = `translateX(${(i - galIndex) * 100}%)`;
+  });
+}
+
+function updateGalDots() {
+  document.querySelectorAll('#galDots .gal-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === galIndex);
+  });
+}
+
+document.getElementById('galPrev')?.addEventListener('click', () => {
+  galIndex = (galIndex - 1 + GAL_TOTAL) % GAL_TOTAL;
+  renderGallery(); updateGalDots();
+});
+document.getElementById('galNext')?.addEventListener('click', () => {
+  galIndex = (galIndex + 1) % GAL_TOTAL;
+  renderGallery(); updateGalDots();
+});
+
+// touch swipe on gallery
+let touchStartX = 0;
+document.getElementById('gallerySlider')?.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+}, { passive: true });
+document.getElementById('gallerySlider')?.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(dx) > 40) {
+    galIndex = dx < 0
+      ? (galIndex + 1) % GAL_TOTAL
+      : (galIndex - 1 + GAL_TOTAL) % GAL_TOTAL;
+    renderGallery(); updateGalDots();
+  }
+});
+
+// ─── sweet messages ───────────────────────────────
+let msgIndex = 0;
+
+function initMessages() {
+  msgIndex = 0;
+  renderMessage(false);
+  const dotContainer = document.getElementById('msgDots');
+  if (dotContainer && dotContainer.children.length === 0) {
+    MESSAGES.forEach((_, i) => {
+      const d = document.createElement('span');
+      d.className = 'gal-dot' + (i === 0 ? ' active' : '');
+      dotContainer.appendChild(d);
+    });
+  }
+  updateMsgDots();
+}
+
+function renderMessage(animate = true) {
+  const card    = document.getElementById('msgCard');
+  const textEl  = document.getElementById('msgText');
+  const subEl   = document.getElementById('msgSub');
+  const numEl   = document.getElementById('msgNumber');
+  if (!card) return;
+
+  if (animate) {
+    card.classList.remove('flip');
+    void card.offsetWidth; // reflow to restart animation
+    card.classList.add('flip');
+  }
+
+  const msg = MESSAGES[msgIndex];
+  textEl.textContent = msg.text;
+  subEl.textContent  = msg.sub;
+  numEl.textContent  = `${msgIndex + 1} / ${MESSAGES.length}`;
+}
+
+function updateMsgDots() {
+  document.querySelectorAll('#msgDots .gal-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === msgIndex);
+  });
+}
+
+document.getElementById('msgPrev')?.addEventListener('click', () => {
+  msgIndex = (msgIndex - 1 + MESSAGES.length) % MESSAGES.length;
+  renderMessage(); updateMsgDots();
+});
+document.getElementById('msgNext')?.addEventListener('click', () => {
+  msgIndex = (msgIndex + 1) % MESSAGES.length;
+  renderMessage(); updateMsgDots();
+});
+
+// ─── confetti ─────────────────────────────────────
+const canvas = document.getElementById('confettiCanvas');
+const ctx    = canvas?.getContext('2d');
+let confetti = [], raf = null;
+const COLORS  = ['#A9D6E8','#F4B9C4','#FBF6EC','#5B8FA8','#E08A9B','#fff5c6'];
+
+function resizeCanvas() {
+  if (!canvas) return;
+  const r = document.getElementById('screenStack').getBoundingClientRect();
+  canvas.width = r.width; canvas.height = r.height;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function burstConfetti() {
+  if (!ctx) return;
+  resizeCanvas();
+  for (let i = 0; i < 65; i++) {
+    confetti.push({
+      x: canvas.width/2 + (Math.random()-.5)*80,
+      y: canvas.height*.35,
+      vx:(Math.random()-.5)*10,
+      vy:-Math.random()*10-3,
+      size:Math.random()*6+4,
+      color:COLORS[Math.floor(Math.random()*COLORS.length)],
+      rot:Math.random()*Math.PI*2,
+      rs:(Math.random()-.5)*.3,
+      shape:Math.random()>.5?'c':'r',
+      life:0
+    });
+  }
+  if (!raf) loop();
+}
+
+function loop() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  confetti.forEach(p => {
+    p.vy+=.22; p.x+=p.vx; p.y+=p.vy; p.rot+=p.rs; p.life++;
+    ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+    ctx.fillStyle=p.color; ctx.globalAlpha=Math.max(0,1-p.life/90);
+    if(p.shape==='c'){ ctx.beginPath(); ctx.arc(0,0,p.size/2,0,Math.PI*2); ctx.fill(); }
+    else { ctx.fillRect(-p.size/2,-p.size/4,p.size,p.size/2); }
+    ctx.restore();
+  });
+  confetti = confetti.filter(p => p.life<90 && p.y<canvas.height+40);
+  if(confetti.length){ raf=requestAnimationFrame(loop); }
+  else { ctx.clearRect(0,0,canvas.width,canvas.height); raf=null; }
+}
+
+// ─── heart rain (finale screen) ──────────────────
+const rainCanvas = document.getElementById('rainCanvas');
+const rainCtx    = rainCanvas?.getContext('2d');
+let rainDrops    = [];
+let rainRAF      = null;
+let rainRunning  = false;
+
+const RAIN_SYMBOLS = ['❤️','💛','🤍','💕','✨','🌸','💖','🌷'];
+
+function resizeRainCanvas() {
+  if (!rainCanvas) return;
+  const r = document.getElementById('screenStack').getBoundingClientRect();
+  rainCanvas.width  = r.width;
+  rainCanvas.height = r.height;
+}
+window.addEventListener('resize', resizeRainCanvas);
+resizeRainCanvas();
+
+function spawnRainDrop() {
+  if (!rainCanvas) return;
+  rainDrops.push({
+    x:     Math.random() * rainCanvas.width,
+    y:     -40,
+    vy:    1.2 + Math.random() * 1.8,
+    vx:    (Math.random() - 0.5) * 0.6,
+    size:  18 + Math.random() * 22,
+    sym:   RAIN_SYMBOLS[Math.floor(Math.random() * RAIN_SYMBOLS.length)],
+    sway:  Math.random() * Math.PI * 2,    // sway phase offset
+    swayA: 0.3 + Math.random() * 0.5,      // sway amplitude
+    alpha: 0.7 + Math.random() * 0.3,
+  });
+}
+
+function rainLoop() {
+  if (!rainCtx || !rainRunning) return;
+  resizeRainCanvas();
+  rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+
+  // spawn new drops steadily
+  if (Math.random() < 0.35) spawnRainDrop();
+
+  rainDrops.forEach(d => {
+    d.sway += 0.025;
+    d.x += d.vx + Math.sin(d.sway) * d.swayA;
+    d.y += d.vy;
+    rainCtx.save();
+    rainCtx.globalAlpha = d.alpha;
+    rainCtx.font = `${d.size}px serif`;
+    rainCtx.textAlign = 'center';
+    rainCtx.fillText(d.sym, d.x, d.y);
+    rainCtx.restore();
+  });
+
+  // recycle drops that fall off the bottom
+  rainDrops = rainDrops.filter(d => d.y < rainCanvas.height + 50);
+
+  rainRAF = requestAnimationFrame(rainLoop);
+}
+
+function startHeartRain() {
+  if (rainRunning) return;
+  rainRunning = true;
+  rainDrops   = [];
+  resizeRainCanvas();
+  // seed an initial spread so it doesn't feel empty at first
+  for (let i = 0; i < 18; i++) {
+    spawnRainDrop();
+    rainDrops[rainDrops.length - 1].y = Math.random() * (rainCanvas?.height ?? 600);
+  }
+  rainLoop();
+}
+
+function stopHeartRain() {
+  rainRunning = false;
+  if (rainRAF) { cancelAnimationFrame(rainRAF); rainRAF = null; }
+  if (rainCtx && rainCanvas) rainCtx.clearRect(0, 0, rainCanvas.width, rainCanvas.height);
+  rainDrops = [];
+}
+
+// stop rain when navigating away from finale
+const _origGoTo = goTo;  // keep reference
+// patch goTo to stop rain when leaving
+const goToOrig = goTo;
+window.__goTo  = goTo;
+// override via event — when "start over" is clicked, rain stops
+document.getElementById('screen-finale')?.addEventListener('click', e => {
+  const btn = e.target.closest('[data-goto]');
+  if (btn) stopHeartRain();
+});

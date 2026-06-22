@@ -1,64 +1,268 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>For You, Sayang</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>a little apology 💛</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Caveat:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <canvas id="hearts-canvas" aria-hidden="true"></canvas>
 
-  <main class="page">
-    <header class="hero">
-      <p class="hero-eyebrow">A little something, just for you</p>
-      <h1 class="hero-title">
-        I love you,<br />
-        <span id="her-name">Sayang</span>
-      </h1>
-      <p class="hero-sub">
-        Every day with you feels like the universe finally got something right.
-      </p>
-      <button type="button" class="btn-primary" id="open-letter-btn">
-        Open my heart
-      </button>
-    </header>
+<div class="backdrop" aria-hidden="true">
+  <div class="paw paw1">🐾</div>
+  <div class="paw paw2">🐾</div>
+  <div class="paw paw3">🐾</div>
+  <div class="paw paw4">🐾</div>
+  <div class="paw paw5">🐾</div>
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+</div>
 
-    <section class="reasons" aria-labelledby="reasons-heading">
-      <h2 id="reasons-heading">Reasons my heart chose you</h2>
-      <div class="reasons-grid" id="reasons-grid"></div>
+<main class="device">
+  <div class="screen-stack" id="screenStack">
+    <canvas class="confetti-canvas" id="confettiCanvas" aria-hidden="true"></canvas>
+
+    <!-- ═══ SCREEN 1: LOCK ═══ -->
+    <section class="screen active" id="screen-lock">
+      <div class="status-fake"><span>9:41</span><span class="dot">●●●</span></div>
+      <p class="eyebrow">a little something for you</p>
+      <h1 class="title">enter your password</h1>
+      <p class="hint-top">hint: the day you were born 🎂</p>
+      <div class="hearts" id="heartsRow">
+        <span class="heart-slot">🤍</span>
+        <span class="heart-slot">🤍</span>
+        <span class="heart-slot">🤍</span>
+        <span class="heart-slot">🤍</span>
+      </div>
+      <p class="wrong-msg" id="wrongMsg">wrong password! try again 🙈</p>
+      <div class="keypad" id="keypad">
+        <button class="key" data-key="1">1</button>
+        <button class="key" data-key="2">2</button>
+        <button class="key" data-key="3">3</button>
+        <button class="key" data-key="4">4</button>
+        <button class="key" data-key="5">5</button>
+        <button class="key" data-key="6">6</button>
+        <button class="key" data-key="7">7</button>
+        <button class="key" data-key="8">8</button>
+        <button class="key" data-key="9">9</button>
+        <button class="key key-ghost" data-key="back">⌫</button>
+        <button class="key" data-key="0">0</button>
+        <button class="key key-ghost" data-key="enter">↵</button>
+      </div>
+      <div class="cat-deco cat-lock cat-bob">🐱</div>
+      <div class="burst-layer" id="burstLayer" aria-hidden="true"></div>
     </section>
 
-    <section class="counter" aria-labelledby="counter-heading">
-      <h2 id="counter-heading">How much I love you</h2>
-      <p class="counter-number" id="love-counter" aria-live="polite">0</p>
-      <p class="counter-label">and still counting…</p>
-      <button type="button" class="btn-secondary" id="add-love-btn">Add more love</button>
+    <!-- ═══ SCREEN 2: READY ═══ -->
+    <section class="screen" id="screen-ready">
+      <div class="cat-deco cat-ready cat-bob">🐈</div>
+      <p class="eyebrow">before we start</p>
+      <h1 class="title">i have something<br>for you.</h1>
+      <p class="subtitle">are you ready?</p>
+      <div class="btn-stack">
+        <button class="btn btn-primary" data-goto="gift">yes, of course 💛</button>
+        <button class="btn btn-ghost" data-goto="tryagain">maybe nooo</button>
+      </div>
     </section>
 
-    <section class="timeline" aria-labelledby="timeline-heading">
-      <h2 id="timeline-heading">Little moments, big meaning</h2>
-      <ul class="timeline-list" id="timeline-list"></ul>
+    <!-- ═══ SCREEN 2b: TRY AGAIN ═══ -->
+    <section class="screen" id="screen-tryagain">
+      <div class="cat-deco cat-grumpy cat-shake">🙀</div>
+      <h1 class="title">that's not<br>an option 😾</h1>
+      <p class="subtitle">come on, say yes.</p>
+      <div class="btn-stack">
+        <button class="btn btn-primary" data-goto="ready">okay fine, go back</button>
+      </div>
     </section>
 
-    <footer class="closing">
-      <p class="closing-quote" id="closing-quote"></p>
-      <p class="closing-sign">Forever yours,</p>
-      <p class="closing-name">— Adam</p>
-    </footer>
-  </main>
+    <!-- ═══ SCREEN 3: GIFT PICKER ═══ -->
+    <section class="screen" id="screen-gift">
+      <p class="eyebrow">one more thing</p>
+      <h1 class="title">pick your gift 🎁</h1>
+      <p class="subtitle">choose wisely~</p>
+      <div class="gift-grid">
 
-  <dialog class="letter-modal" id="letter-modal" aria-labelledby="letter-title">
-    <article class="letter">
-      <button type="button" class="letter-close" id="close-letter-btn" aria-label="Close letter">&times;</button>
-      <h2 id="letter-title">My love letter to you</h2>
-      <div class="letter-body" id="letter-body"></div>
-    </article>
-  </dialog>
+        <button class="gift-card gift-tall" data-goto="letter" style="--i:0" id="gcard-letter">
+          <div class="gift-inner">
+            <span class="gift-big-emoji">💌</span>
+            <span class="gift-label">my apology</span>
+            <span class="gift-sublabel">a letter from the heart</span>
+          </div>
+          <span class="gift-badge">✓</span>
+          <span class="gift-shine"></span>
+        </button>
 
-  <script src="script.js"></script>
+        <button class="gift-card gift-tall" data-goto="memories" style="--i:1" id="gcard-memories">
+          <div class="gift-inner">
+            <span class="gift-big-emoji">📸</span>
+            <span class="gift-label">our memories</span>
+            <span class="gift-sublabel">moments i'll never forget</span>
+          </div>
+          <span class="gift-badge">✓</span>
+          <span class="gift-shine"></span>
+        </button>
+
+        <button class="gift-card gift-wide" data-goto="messages" style="--i:2" id="gcard-messages">
+          <div class="gift-inner gift-inner-wide">
+            <span class="gift-big-emoji">💬</span>
+            <div>
+              <span class="gift-label">sweet messages</span>
+              <span class="gift-sublabel">things i always mean to say</span>
+            </div>
+          </div>
+          <span class="gift-badge">✓</span>
+          <span class="gift-shine"></span>
+        </button>
+
+      </div>
+      <div class="paws-deco">🐾 🐾</div>
+
+      <!-- appears only after all 3 gifts visited -->
+      <div class="finale-reveal" id="finaleReveal">
+        <p class="finale-hint">you've opened everything 🎀</p>
+        <button class="btn btn-finale" data-goto="finale">see the ending 💛</button>
+      </div>
+    </section>
+
+    <!-- ═══ SCREEN 4a: APOLOGY LETTER ═══ -->
+    <section class="screen" id="screen-letter">
+      <div class="floaty floaty1">💕</div>
+      <div class="floaty floaty2">🤍</div>
+      <div class="floaty floaty3">✨</div>
+      <p class="eyebrow">a little apology, a lot of love</p>
+      <h1 class="title title-script">dear you,</h1>
+      <div class="letter-card">
+        <p class="letter-body">
+          I'm sorry — really, genuinely sorry. For what I said, for what I didn't say,
+          and for the moments I let my pride speak louder than my care for you.<br><br>
+          You deserved better, and I know it. I can't undo what happened, but I can
+          promise to listen more, react less, and choose you on purpose — every single day,
+          not just on the easy ones.<br><br>
+          Thank you for your patience. Thank you for still being here. 🌸
+        </p>
+        <p class="letter-sign">— with love, always 💛</p>
+      </div>
+      <button class="btn btn-done" data-done="letter">i've read this ✓</button>
+    </section>
+    <section class="screen" id="screen-memories">
+      <div class="floaty floaty1">📸</div>
+      <p class="eyebrow">our story</p>
+      <h1 class="title title-script">moments i treasure</h1>
+
+      <div class="gallery-wrap">
+        <div class="gallery-slider" id="gallerySlider">
+
+          <!-- SLIDE 1 -->
+          <div class="mem-slide">
+            <div class="mem-photo-wrap">
+              <img src="assets/mem1.jpg" alt="memory 1" class="mem-photo" onerror="this.parentNode.classList.add('placeholder')">
+              <div class="mem-placeholder-inner">🌸</div>
+            </div>
+            <p class="mem-caption">every moment with you is a gift 💛</p>
+          </div>
+
+          <!-- SLIDE 2 -->
+          <div class="mem-slide">
+            <div class="mem-photo-wrap">
+              <img src="assets/mem2.jpg" alt="memory 2" class="mem-photo" onerror="this.parentNode.classList.add('placeholder')">
+              <div class="mem-placeholder-inner">🤍</div>
+            </div>
+            <p class="mem-caption">i smile every time i think of this 😊</p>
+          </div>
+
+          <!-- SLIDE 3 -->
+          <div class="mem-slide">
+            <div class="mem-photo-wrap">
+              <img src="assets/mem3.jpg" alt="memory 3" class="mem-photo" onerror="this.parentNode.classList.add('placeholder')">
+              <div class="mem-placeholder-inner">✨</div>
+            </div>
+            <p class="mem-caption">this is my favourite kind of day 🌤️</p>
+          </div>
+
+          <!-- SLIDE 4 -->
+          <div class="mem-slide">
+            <div class="mem-photo-wrap">
+              <img src="assets/mem4.jpg" alt="memory 4" class="mem-photo" onerror="this.parentNode.classList.add('placeholder')">
+              <div class="mem-placeholder-inner">💕</div>
+            </div>
+            <p class="mem-caption">i'd choose this again and again 🔁</p>
+          </div>
+
+          <!-- SLIDE 5 -->
+          <div class="mem-slide">
+            <div class="mem-photo-wrap">
+              <img src="assets/mem5.jpg" alt="memory 5" class="mem-photo" onerror="this.parentNode.classList.add('placeholder')">
+              <div class="mem-placeholder-inner">🌷</div>
+            </div>
+            <p class="mem-caption">us, always 🐾</p>
+          </div>
+
+          <!-- SLIDE 6 -->
+          <div class="mem-slide">
+            <div class="mem-photo-wrap">
+              <img src="assets/mem6.jpg" alt="memory 6" class="mem-photo" onerror="this.parentNode.classList.add('placeholder')">
+              <div class="mem-placeholder-inner">🫶</div>
+            </div>
+            <p class="mem-caption">if i could relive any moment — it's this one 💛</p>
+          </div>
+
+        </div>
+
+        <div class="gallery-nav">
+          <button class="gal-btn" id="galPrev">‹</button>
+          <div class="gal-dots" id="galDots"></div>
+          <button class="gal-btn" id="galNext">›</button>
+        </div>
+      </div>
+
+      <button class="btn btn-done" data-done="memories">done looking 📸 ✓</button>
+    </section>
+    <section class="screen" id="screen-messages">
+      <div class="floaty floaty1">💬</div>
+      <div class="floaty floaty3">💛</div>
+      <p class="eyebrow">things i always mean to say</p>
+      <h1 class="title title-script">for you 🌸</h1>
+
+      <div class="msg-card-wrap">
+        <div class="msg-card" id="msgCard">
+          <div class="msg-number" id="msgNumber">1 / 6</div>
+          <p class="msg-text" id="msgText">loading…</p>
+          <p class="msg-sub" id="msgSub"></p>
+        </div>
+        <div class="msg-nav">
+          <button class="gal-btn" id="msgPrev">‹</button>
+          <div class="gal-dots" id="msgDots"></div>
+          <button class="gal-btn" id="msgNext">›</button>
+        </div>
+      </div>
+
+      <button class="btn btn-done" data-done="messages">done reading 💬 ✓</button>
+    </section>
+    <section class="screen" id="screen-finale">
+      <canvas class="rain-canvas" id="rainCanvas" aria-hidden="true"></canvas>
+      <div class="finale-content">
+        <div class="finale-cat">🐱</div>
+        <p class="eyebrow">that's everything 🎀</p>
+        <h1 class="title title-script">thank you<br>for being mine.</h1>
+        <div class="finale-card">
+          <p class="finale-body">
+            no matter what happens between us,
+            i want you to know that you matter —
+            deeply, genuinely, always. 🌸
+          </p>
+          <p class="finale-stars">✨ 💛 ✨</p>
+        </div>
+        <p class="finale-sub">you've seen everything i made for you 🎁</p>
+        <button class="btn btn-ghost btn-restart" data-goto="lock">start over 🔁</button>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script src="script.js"></script>
 </body>
 </html>
