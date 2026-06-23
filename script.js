@@ -292,7 +292,7 @@ function checkCode() {
 
 // ─── gallery (memories) ───────────────────────────
 // Edit captions here — photo # matches assets/1.jpg, 2.jpg, etc.
-const ASSET_BASE = 'https://adamnibosh.github.io/for-sayang/assets/';
+const ASSET_BASE = 'https://adamnibosh.github.io/for-kasya-tersayang/assets/';
 const EXCLUDED_PHOTOS = new Set([3, 10, 16, 18, 21]);
 const CAPTIONS = {
   1: 'ni first time kan sayang kita gamba berdua, nervous sangat masa ni',
@@ -303,7 +303,7 @@ const MEMORIES = Array.from({ length: 21 }, (_, i) => i + 1)
   .filter(num => !EXCLUDED_PHOTOS.has(num))
   .map(num => ({
     num,
-    src: `${ASSET_BASE}${num}.jpg?v=9`,
+    src: `${ASSET_BASE}${num}.jpg?v=17`,
     caption: CAPTIONS[num] ?? '---'
   }));
 
