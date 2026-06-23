@@ -277,6 +277,7 @@ function checkCode() {
 const ASSET_BASE = 'https://adamnibosh.github.io/for-sayang/assets/';
 const EXCLUDED_PHOTOS = new Set([3, 10, 16, 18, 21]);
 const CAPTIONS = {
+  1: 'ni first kita gamba berdua 💛',
   2: 'time ni kita malu malu lagi nak bersembang, and lama kita duduk berdua dekat situ'
 };
 const MEMORIES = Array.from({ length: 21 }, (_, i) => i + 1)
