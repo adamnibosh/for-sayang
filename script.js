@@ -167,12 +167,6 @@ function handlePointerUp(e) {
     return;
   }
 
-  const key = e.target.closest('#keypad .key');
-  if (key) {
-    e.preventDefault();
-    hapticTap();
-    handleKeyPress(key, e);
-  }
 }
 
 const screenStack = document.getElementById('screenStack');
@@ -232,6 +226,30 @@ function spawnHeartBurst() {
       burstLayer.appendChild(h);
       setTimeout(() => h.remove(), 950);
     }, i * 60);
+  });
+}
+
+let lastKeyTime = 0;
+let lastKeyId = '';
+
+function initKeypad() {
+  const keypad = document.getElementById('keypad');
+  if (!keypad || keypad.dataset.bound) return;
+  keypad.dataset.bound = '1';
+
+  keypad.addEventListener('pointerdown', e => {
+    const key = e.target.closest('.key');
+    if (!key || (e.pointerType === 'mouse' && e.button !== 0)) return;
+
+    const now = Date.now();
+    const keyId = key.dataset.key;
+    if (keyId === lastKeyId && now - lastKeyTime < 90) return;
+    lastKeyTime = now;
+    lastKeyId = keyId;
+
+    e.preventDefault();
+    hapticTap();
+    handleKeyPress(key, e);
   });
 }
 
@@ -579,3 +597,5 @@ bindSwipe(document.getElementById('msgCard'), 'messages', dir => {
   renderMessage();
   updateMsgDots();
 });
+
+initKeypad();
