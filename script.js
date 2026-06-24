@@ -598,4 +598,46 @@ bindSwipe(document.getElementById('msgCard'), 'messages', dir => {
   updateMsgDots();
 });
 
+function initTouchFeedback() {
+  if (!IS_TOUCH) return;
+
+  const SELECTORS = '.btn, .gift-card, .gal-btn, .key';
+  let activeEl = null;
+
+  function clearTouch(el) {
+    if (!el) return;
+    el.classList.remove('touch-active');
+    el.querySelector('.gift-shine')?.classList.remove('shine-play');
+  }
+
+  document.addEventListener('pointerdown', e => {
+    const el = e.target.closest(SELECTORS);
+    if (!el || (e.pointerType === 'mouse' && e.button !== 0)) return;
+
+    clearTouch(activeEl);
+    activeEl = el;
+    el.classList.add('touch-active');
+
+    if (el.classList.contains('gift-card')) {
+      const shine = el.querySelector('.gift-shine');
+      if (shine) {
+        shine.classList.remove('shine-play');
+        void shine.offsetWidth;
+        shine.classList.add('shine-play');
+      }
+    }
+  }, { passive: true });
+
+  function releaseTouch() {
+    if (!activeEl) return;
+    const el = activeEl;
+    activeEl = null;
+    setTimeout(() => clearTouch(el), el.classList.contains('gift-card') ? 320 : 120);
+  }
+
+  document.addEventListener('pointerup', releaseTouch, { passive: true });
+  document.addEventListener('pointercancel', releaseTouch, { passive: true });
+}
+
 initKeypad();
+initTouchFeedback();

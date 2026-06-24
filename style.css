@@ -809,12 +809,39 @@ button {
     transform: none;
   }
 
-  .btn:active,
-  .key:active,
-  .gift-card:active,
-  .gal-btn:active {
-    transform: scale(0.96);
+  /* touch feedback — mirrors laptop hover on iPhone/Android */
+  .btn.touch-active {
+    transform: translateY(-2px) scale(1.015);
+    transition-duration: 0.12s;
+  }
+  .btn-primary.touch-active { box-shadow: 0 14px 30px rgba(91,143,168,.45); }
+  .btn-ghost.touch-active { box-shadow: 0 12px 26px rgba(74,59,48,.16); }
+
+  .key.touch-active {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 22px rgba(74,59,48,.14);
+    background: var(--sky);
     transition-duration: 0.08s;
+  }
+
+  .gift-card.touch-active {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 16px 30px rgba(74,59,48,.14);
+    transition-duration: 0.12s;
+  }
+  .gift-card.touch-active .gift-big-emoji {
+    transform: scale(1.15) rotate(-5deg);
+  }
+  .gift-card.touch-active .gift-shine,
+  .gift-shine.shine-play {
+    opacity: 1;
+    animation: shineSweep .7s ease forwards;
+  }
+
+  .gal-btn.touch-active {
+    transform: scale(1.12);
+    background: var(--sky);
+    transition-duration: 0.1s;
   }
 }
 
