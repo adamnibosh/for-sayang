@@ -396,13 +396,14 @@ const CAPTIONS = {
   14: 'then sayang decide to comfort i mcmtu, thats the moment i realise you sayang i sangat and i would love to hold your hands atas pelamin nanti',
   15: 'then masani majlis kita and after present project dekat pengarah kann.',
   17: 'we looked soo cute together sayang. imagine our wedding photos nanti',
-  19: 'masani masa kita berdua da semakin singkat, after paper math kita bergamba and prepare untuk ldr kan hm'
+  19: 'masani masa kita berdua da semakin singkat, after paper math kita bergamba and prepare untuk ldr kan hm',
+  20: 'hm. this is our last picture together, tak sangka da hampir 2 bulan since kita tak jumpa in person. i rinduu kamu sooo muchh'
 };
 const MEMORIES = Array.from({ length: 21 }, (_, i) => i + 1)
   .filter(num => !EXCLUDED_PHOTOS.has(num))
   .map(num => ({
     num,
-    src: `${ASSET_BASE}${num}.jpg?v=36`,
+    src: `${ASSET_BASE}${num}.jpg?v=37`,
     caption: CAPTIONS[num] ?? '---'
   }));
 
