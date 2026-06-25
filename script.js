@@ -385,13 +385,14 @@ const CAPTIONS = {
   1: 'ni first time kan sayang kita gamba berdua, nervous sangat masa ni',
   2: 'time ni kita malu malu lagi nak bersembang, and lama kita duduk berdua dekat situ',
   4: 'lepastu, kita date dekat KJM Perlis tu. baby sumpa rasa best dapat spend time dengan kamu. first time juga baby dapat dating jalan jalan hm',
-  5: 'and ni first time baby dapat rasa my first blindpax and sayang sendiri yg belanjer baby'
+  5: 'and ni first time baby dapat rasa my first blindpax and sayang sendiri yg belanjer baby',
+  6: 'then kamu ambil gamba mcm ni dekat escalator. btw gamba first kiter expose masing masing kan hihi'
 };
 const MEMORIES = Array.from({ length: 21 }, (_, i) => i + 1)
   .filter(num => !EXCLUDED_PHOTOS.has(num))
   .map(num => ({
     num,
-    src: `${ASSET_BASE}${num}.jpg?v=20`,
+    src: `${ASSET_BASE}${num}.jpg?v=26`,
     caption: CAPTIONS[num] ?? '---'
   }));
 
