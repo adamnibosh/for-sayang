@@ -52,8 +52,8 @@ const MOODS = {
     emoji: '🫂',
     cards: [
       {
-        text: 'even bila rasa alone, you\'re not really alone. 🤍',
-        sub: 'i\'m thinking of you — right now, in this exact moment.'
+        text: 'kamu tak pernah alone pun, i akan sentiasa ada dalam hati kamu 🤍',
+        sub: 'i love you every seconds time is ticking'
       },
       {
         text: 'baby faham sometimes you just need space. 🌙',
