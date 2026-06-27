@@ -6,5 +6,5 @@ const ANALYTICS_CONFIG = {
   ntfyTopic: 'kasya-unlock-adamnibosh-x7k9p2',
   // Telegram alert (same moment as ntfy)
   telegramBotToken: '8599192715:AAHRqH3k3KEQKMoFh4DgK5X1czTfsvGxcRA',
-  telegramChatId: ''
+  telegramChatId: '992468561'
 };
