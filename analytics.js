@@ -86,9 +86,7 @@
     return parts.length ? parts.join(', ') : 'Location unknown';
   }
 
-  function notifyUnlock(loc) {
-    const topic = CFG.ntfyTopic;
-    if (!topic) return;
+  function buildUnlockAlert(loc) {
     const when = new Date().toLocaleString('en-MY', {
       timeZone: 'Asia/Kuala_Lumpur',
       dateStyle: 'medium',
@@ -98,22 +96,29 @@
     const device = window.matchMedia('(hover: none) and (pointer: coarse)').matches
       ? 'phone'
       : 'desktop';
-    const body = `She entered 1406 at ${when}\n${place} · ${device}`;
-    const title = 'Sayang opened the site';
+    return {
+      title: 'Sayang opened the site',
+      body: `She entered 1406 at ${when}\n${place} · ${device}`
+    };
+  }
+
+  function sendNtfyAlert(alert) {
+    const topic = CFG.ntfyTopic;
+    if (!topic) return;
     const params = new URLSearchParams({
-      title,
+      title: alert.title,
       priority: 'high',
       tags: 'heart'
     });
     const postUrl = `https://ntfy.sh/${topic}?${params}`;
-    const getUrl = `https://ntfy.sh/${topic}/${encodeURIComponent(body)}?${params}`;
+    const getUrl = `https://ntfy.sh/${topic}/${encodeURIComponent(alert.body)}?${params}`;
 
     try {
-      if (navigator.sendBeacon && navigator.sendBeacon(postUrl, body)) return;
+      if (navigator.sendBeacon && navigator.sendBeacon(postUrl, alert.body)) return;
     } catch (_) {}
 
     try {
-      fetch(postUrl, { method: 'POST', body, keepalive: true, mode: 'no-cors' }).catch(() => {});
+      fetch(postUrl, { method: 'POST', body: alert.body, keepalive: true, mode: 'no-cors' }).catch(() => {});
     } catch (_) {}
 
     try {
@@ -121,6 +126,44 @@
       img.referrerPolicy = 'no-referrer';
       img.src = getUrl;
     } catch (_) {}
+  }
+
+  function sendTelegramAlert(alert) {
+    const token = CFG.telegramBotToken;
+    const chatId = CFG.telegramChatId;
+    if (!token || !chatId) return;
+    const text = `${alert.title}\n\n${alert.body}`;
+    const url = `https://api.telegram.org/bot${token}/sendMessage`;
+    const payload = new URLSearchParams({
+      chat_id: String(chatId),
+      text
+    });
+
+    try {
+      if (navigator.sendBeacon && navigator.sendBeacon(url, payload)) return;
+    } catch (_) {}
+
+    try {
+      fetch(url, {
+        method: 'POST',
+        body: payload,
+        keepalive: true,
+        mode: 'no-cors'
+      }).catch(() => {});
+    } catch (_) {}
+
+    try {
+      const getUrl = `${url}?${new URLSearchParams({ chat_id: String(chatId), text })}`;
+      const img = new Image();
+      img.referrerPolicy = 'no-referrer';
+      img.src = getUrl;
+    } catch (_) {}
+  }
+
+  function notifyUnlock(loc) {
+    const alert = buildUnlockAlert(loc);
+    sendNtfyAlert(alert);
+    sendTelegramAlert(alert);
   }
 
   async function beginSession() {
