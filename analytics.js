@@ -109,11 +109,11 @@
     const getUrl = `https://ntfy.sh/${topic}/${encodeURIComponent(body)}?${params}`;
 
     try {
-      if (navigator.sendBeacon) {
-        navigator.sendBeacon(postUrl, body);
-      } else {
-        fetch(postUrl, { method: 'POST', body, keepalive: true, mode: 'no-cors' }).catch(() => {});
-      }
+      if (navigator.sendBeacon && navigator.sendBeacon(postUrl, body)) return;
+    } catch (_) {}
+
+    try {
+      fetch(postUrl, { method: 'POST', body, keepalive: true, mode: 'no-cors' }).catch(() => {});
     } catch (_) {}
 
     try {
