@@ -18,7 +18,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Caveat:wght@500;600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://adamnibosh.github.io/for-kasya-tersayang/style.css?v=51">
+<link rel="stylesheet" href="https://adamnibosh.github.io/for-kasya-tersayang/style.css?v=52">
 </head>
 <body>
 
@@ -247,13 +247,20 @@
     </section>
 
     <!-- ═══ SCREEN 4d: DAILY NOTES (append only) ═══ -->
-    <section class="screen" id="screen-daily" hidden>
-      <p class="eyebrow">setiap hari ada yang baru</p>
-      <h1 class="title">daily letter dari zikry 📅</h1>
-      <p class="subtitle" id="dailyCount">loading notes…</p>
-      <p class="daily-hint">letter lama tak hilang, so you could read it multiple times 💛</p>
-      <div class="daily-list" id="dailyList"></div>
-      <button class="btn btn-done" data-done-daily="daily">okayy, babyy 💛 ✓</button>
+    <section class="screen screen-daily" id="screen-daily" hidden>
+      <div class="daily-head">
+        <p class="eyebrow">setiap hari ada yang baru</p>
+        <h1 class="title daily-title">daily letter dari zikry 📅</h1>
+        <p class="subtitle" id="dailyCount">loading notes…</p>
+        <p class="daily-hint">letter lama tak hilang, so you could read it multiple times 💛</p>
+      </div>
+      <div class="daily-list-wrap">
+        <div class="daily-list" id="dailyList"></div>
+      </div>
+      <div class="daily-foot">
+        <p class="daily-scroll-hint" id="dailyScrollHint" hidden>scroll for more letters ↓</p>
+        <button class="btn btn-done" data-done-daily="daily">okayy, babyy 💛 ✓</button>
+      </div>
     </section>
 
     <section class="screen" id="screen-finale" hidden>
@@ -298,7 +305,7 @@
 <script src="https://adamnibosh.github.io/for-kasya-tersayang/analytics-config.js?v=10"></script>
 <script src="https://adamnibosh.github.io/for-kasya-tersayang/analytics.js?v=6"></script>
 <script src="https://adamnibosh.github.io/for-kasya-tersayang/content-loader.js?v=2"></script>
-<script src="https://adamnibosh.github.io/for-kasya-tersayang/daily-panel.js?v=6"></script>
+<script src="https://adamnibosh.github.io/for-kasya-tersayang/daily-panel.js?v=7"></script>
 <script src="https://adamnibosh.github.io/for-kasya-tersayang/admin-panel.js?v=2"></script>
 <script src="https://adamnibosh.github.io/for-kasya-tersayang/script.js?v=52"></script>
 </body>
