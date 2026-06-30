@@ -1020,11 +1020,22 @@ button {
 
 /* ─── daily notes (append only) ─── */
 #screen-daily.screen-daily {
-  overflow: hidden;
+  justify-content: flex-start;
   align-items: stretch;
   text-align: center;
   padding-top: calc(14px + var(--safe-top));
-  padding-bottom: calc(12px + var(--safe-bottom));
+  padding-bottom: calc(16px + var(--safe-bottom));
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+#screen-daily.screen-daily::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 .daily-head {
   flex-shrink: 0;
@@ -1037,39 +1048,12 @@ button {
   text-align: center;
   color: var(--brown-soft);
   font-size: 13px;
-  margin: 4px 0 10px;
+  margin: 4px 0 12px;
 }
 .daily-list-wrap {
-  flex: 1;
-  min-height: 0;
   width: 100%;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  margin: 4px 0 10px;
+  margin-bottom: 8px;
 }
-.daily-list-wrap::before,
-.daily-list-wrap::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 18px;
-  pointer-events: none;
-  z-index: 2;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-.daily-list-wrap::before {
-  top: 0;
-  background: linear-gradient(to bottom, var(--cream) 0%, transparent 100%);
-}
-.daily-list-wrap::after {
-  bottom: 0;
-  background: linear-gradient(to top, var(--cream) 0%, transparent 100%);
-}
-.daily-list-wrap.can-scroll-up::before { opacity: 1; }
-.daily-list-wrap.can-scroll-down::after { opacity: 1; }
 .daily-badge {
   display: inline-flex;
   align-items: center;
@@ -1089,26 +1073,12 @@ button {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 6px 4px 12px;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  scroll-behavior: smooth;
-  touch-action: pan-y;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-.daily-list::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
+  padding: 0 2px;
 }
 .daily-foot {
   flex-shrink: 0;
   width: 100%;
+  padding-top: 8px;
 }
 .daily-card {
   position: relative;

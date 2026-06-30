@@ -67,29 +67,7 @@
         </article>
       `;
     }).join('');
-    updateDailyScroll(list);
   }
-
-  function updateDailyScroll(list) {
-    const wrap = list?.parentElement;
-    if (!wrap || !list) return;
-
-    const sync = () => {
-      const scrollable = list.scrollHeight > list.clientHeight + 2;
-      const atTop = list.scrollTop <= 4;
-      const atBottom = list.scrollTop + list.clientHeight >= list.scrollHeight - 4;
-      wrap.classList.toggle('can-scroll-up', scrollable && !atTop);
-      wrap.classList.toggle('can-scroll-down', scrollable && !atBottom);
-    };
-
-    if (!list.dataset.scrollBound) {
-      list.dataset.scrollBound = '1';
-      list.addEventListener('scroll', sync, { passive: true });
-      window.addEventListener('resize', sync);
-    }
-    requestAnimationFrame(sync);
-  }
-
   function escapeHtml(str) {
     return String(str)
       .replace(/&/g, '&amp;')
