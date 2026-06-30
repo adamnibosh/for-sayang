@@ -8,3 +8,4 @@ const ANALYTICS_CONFIG = {
   telegramBotToken: '8599192715:AAHRqH3k3KEQKMoFh4DgK5X1czTfsvGxcRA',
   telegramChatId: '992468561'
 };
+window.ANALYTICS_CONFIG = ANALYTICS_CONFIG;

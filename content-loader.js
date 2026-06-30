@@ -1,6 +1,11 @@
 (function () {
+  function getConfig() {
+    if (typeof ANALYTICS_CONFIG !== 'undefined') return ANALYTICS_CONFIG;
+    return window.ANALYTICS_CONFIG || null;
+  }
+
   function dbBase() {
-    const url = window.ANALYTICS_CONFIG?.firebaseDatabaseUrl;
+    const url = getConfig()?.firebaseDatabaseUrl;
     return url ? url.replace(/\/$/, '') : '';
   }
 
